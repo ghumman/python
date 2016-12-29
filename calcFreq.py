@@ -32,7 +32,6 @@ frequency = 0
 GPIO.output(24, 0)
 lowFreq = 0
 
-
 # callback funciton: occur whenever we get a rising edge interrupt
 # frequency = 1 / duration
 # duratation = time of current rising edge - time of previous rising edge
@@ -53,7 +52,10 @@ GPIO.add_event_detect(25, GPIO.RISING, callback=my_callback, bouncetime=80)
 # if lowFreq is increment to 4 set the pin 24 
 try: 
 	while True:
-	
+		currentTime = time.time()
+		elapsedTime = currentTime - finalTime
+		if elapsedTime > 5:
+			frequency = 0	
 		if frequency < 4: 
 			lowFreq+=1
 			if lowFreq > 4:
@@ -64,6 +66,14 @@ try:
 				target.write("Frequency has gone below 4\n")
 				print "Frequency has gone below 4"
 				target.close()
+		
+		# if frequency is greater than 4, lowFreq needs to get corrected again
+		# following will stabilize the logic. And will make logic more deterministic
+		else :
+			if lowFreq > 0:
+				lowFreq-=1
+		
+		# add one second delay
 		sleep(1)
 
 
