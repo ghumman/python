@@ -1,6 +1,19 @@
 import RPi.GPIO as GPIO #GPIO pins for raspberry pi 
 import time 		# for using functions like time	
 from time import sleep	# for giving some delay
+from sys import argv	# for taking argument at command line
+import datetime		# for displaying current time 
+
+# make the argument equal to filename
+script, filename = argv 
+
+# write starting application time in the text file
+target = open(filename, 'a') # open and append the file
+target.write("Starting time of application: ")
+t = datetime.datetime.now()
+target.write(t.strftime('%1:%M:%S%p %Z on %b %d, %Y\n'))	# convert current to format ' 10:49AM on Dec 29, 2016'
+target.close()
+
 
 # don't show me warnings like GPIO pin is already being used by other processes, just overwrite it. 
 GPIO.setwarnings(False)
@@ -44,8 +57,13 @@ try:
 		if frequency < 4: 
 			lowFreq+=1
 			if lowFreq > 4:
-				print "Frequency has gone below 4"
 				GPIO.output(24, 1)
+				target = open(filename, 'a') # open and append the file
+				tn = datetime.datetime.now()
+				target.write(tn.strftime('%1:%M:%S%p %Z on %b %d, %Y: '))	# convert current to format ' 10:49AM on Dec 29, 2016'
+				target.write("Frequency has gone below 4\n")
+				print "Frequency has gone below 4"
+				target.close()
 		sleep(1)
 
 
